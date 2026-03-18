@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Knight Bistro - Patna's Premier Dining</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- [STYLING START] -->
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        @keyframes bounce-in {
+            0% { transform: translate(-50%, 20px); opacity: 0; }
+            100% { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .cart-drawer { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cart-drawer.closed { transform: translateX(100%); }
+        .cart-drawer.open { transform: translateX(0); }
+
+        .chat-window { transition: all 0.3s ease; }
+        .chat-window.hidden { transform: translateY(20px) scale(0.95); opacity: 0; pointer-events: none; }
+        
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #d97706;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Custom scrollbar for a premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 10px; }
+    </style>
+    <!-- [STYLING END] -->
+</head>
+<body class="bg-[#fafaf9] text-gray-900 selection:bg-amber-100 overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-amber-600 p-2 rounded-lg text-white">
+                    <i data-lucide="utensils" size="24"></i>
+                </div>
+                <span class="text-2xl font-serif font-bold tracking-tight text-gray-900">
+                    L'KNIGHT <span class="text-amber-600 font-normal">BISTRO</span>
+                </span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 uppercase tracking-widest">
+                <a href="#menu" class="hover:text-amber-600 transition-colors">Menu</a>
+                <a href="#about" class="hover:text-amber-600 transition-colors">Experience</a>
+                <a href="#contact" class="hover:text-amber-600 transition-colors">Location</a>
+            </div>
+
+            <button onclick="toggleCart(true)" class="relative p-2 text-gray-700 hover:bg-gray-100 rounded-full transition-all">
+                <i data-lucide="shopping-bag" size="24"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-amber-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white hidden">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative h-[90vh] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80" alt="Bistro" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+        </div>
+        <div class="relative z-10 text-center text-white px-4 max-w-4xl">
+            <h2 class="text-amber-500 font-serif italic text-2xl mb-4">Fine Dining in Patna</h2>
+            <h1 class="text-5xl md:text-7xl font-serif font-bold mb-8 leading-tight">Elevated Flavors <br> in Every Moment</h1>
+            <p class="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-light leading-relaxed">
+                Welcome to L'Knight Bistro. Experience a culinary journey crafted with passion in the heart of Bihar's capital.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#menu" class="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg uppercase tracking-widest text-sm">Explore Menu</a>
+                <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-bold transition-all uppercase tracking-widest text-sm">Book a Table</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-24 max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-amber-600 font-serif italic text-xl mb-4">Our Palette</h2>
+            <h3 class="text-4xl md:text-5xl font-serif font-bold mb-8">The Seasonal Menu</h3>
+            <div id="category-filters" class="flex flex-wrap justify-center gap-2 md:gap-4">
+                <!-- Dynamic Filters Rendered Here -->
+            </div>
+        </div>
+        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamic Menu Items Rendered Here -->
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="bg-amber-50 py-24">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i data-lucide="utensils" class="text-amber-600"></i>
+                </div>
+                <h4 class="font-serif font-bold text-xl mb-3">Patna's Finest</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">International standards in the heart of Bihar.</p>
+            </div>
+            <div>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i data-lucide="star" class="text-amber-600"></i>
+                </div>
+                <h4 class="font-serif font-bold text-xl mb-3">Chef-Led Innovation</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">Each dish is a masterpiece designed by our executive chefs.</p>
+            </div>
+            <div>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <i data-lucide="map-pin" class="text-amber-600"></i>
+                </div>
+                <h4 class="font-serif font-bold text-xl mb-3">Boring Road</h4>
+                <p class="text-gray-500 text-sm leading-relaxed">Conveniently located for the city's sophisticated diners.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-950 text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-2">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="bg-amber-600 p-2 rounded-lg"><i data-lucide="utensils" size="24"></i></div>
+                    <span class="text-2xl font-serif font-bold tracking-tight">L'KNIGHT <span class="text-amber-600 font-normal">BISTRO</span></span>
+                </div>
+                <p class="text-gray-400 max-w-sm mb-8 text-sm leading-relaxed">Join us for a journey of taste and refinement in the historic city of Patna, Bihar. Experience culinary excellence like never before.</p>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold mb-6 text-lg">Hours</h4>
+                <ul class="space-y-4 text-gray-400 text-xs font-bold uppercase tracking-tighter">
+                    <li class="flex justify-between"><span>Mon - Tue</span> <span class="text-white">12:00 - 22:00</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-amber-500">Wednesday</span> <span class="text-red-500">CLOSED</span></li>
+                    <li class="flex justify-between"><span>Thu - Sun</span> <span class="text-white">10:00 - 23:00</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold mb-6 text-lg">Contact</h4>
+                <ul class="space-y-4 text-gray-400 text-sm">
+                    <li class="flex gap-3 items-start"><i data-lucide="map-pin" class="text-amber-600 mt-1" size="18"></i> <span>Boring Road, Patna, Bihar, India - 800001</span></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[61] cart-drawer closed flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b">
+            <h3 class="font-serif font-bold text-xl flex items-center gap-2">
+                <i data-lucide="shopping-bag" class="text-amber-600"></i> Your Order
+            </h3>
+            <button onclick="toggleCart(false)" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <i data-lucide="x" size="24"></i>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Dynamic Cart Items Rendered Here -->
+            <p class="text-center text-gray-400 mt-20 italic">Your tray is empty.</p>
+        </div>
+        <div id="cart-footer" class="p-8 bg-gray-50 border-t hidden">
+            <!-- AI Recommendation -->
+            <div class="bg-amber-100/50 border border-amber-200 rounded-2xl p-4 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-amber-800 flex items-center gap-1">
+                        <i data-lucide="sparkles" size="12"></i> AI Sommelier
+                    </span>
+                    <button id="get-rec-btn" onclick="fetchAIRec()" class="text-[10px] font-bold bg-amber-600 text-white px-2 py-1 rounded-md hover:bg-amber-700">Get Suggestion</button>
+                </div>
+                <p id="ai-rec-text" class="text-xs text-amber-900 leading-relaxed italic">Add items to see pairings.</p>
+            </div>
+            <div class="flex justify-between text-xl font-serif font-bold mb-8 text-gray-900">
+                <span>Grand Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button onclick="processOrder()" id="checkout-btn" class="w-full bg-amber-600 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-amber-700 shadow-xl shadow-amber-900/20 active:scale-95 transition-all">Checkout Now</button>
+        </div>
+    </div>
+
+    <!-- AI Concierge Floating Button -->
+    <div id="chat-toggle" class="fixed bottom-8 right-8 z-50">
+        <button onclick="toggleChat(true)" class="bg-amber-600 text-white p-5 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center gap-3 group">
+            <i data-lucide="message-square" size="28"></i>
+            <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap font-bold tracking-widest text-sm uppercase">Ask Concierge</span>
+        </button>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="chat-window" class="fixed bottom-6 right-6 w-80 md:w-96 bg-white rounded-[2rem] shadow-2xl z-[100] border border-gray-100 flex flex-col h-[500px] chat-window hidden">
+        <div class="bg-amber-600 p-4 text-white flex justify-between items-center rounded-t-[2rem]">
+            <div class="flex items-center gap-2">
+                <i data-lucide="sparkles" size="20"></i>
+                <h4 class="font-serif font-bold">L'Knight Concierge</h4>
+            </div>
+            <button onclick="toggleChat(false)" class="p-1 hover:bg-amber-700 rounded-full"><i data-lucide="x" size="18"></i></button>
+        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 text-sm">
+            <div class="flex justify-start">
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 max-w-[85%]">
+                    Namaste! I am the L'Knight host. How can I assist your dining experience in Patna today?
+                </div>
+            </div>
+        </div>
+        <div class="p-4 border-t bg-white flex gap-2">
+            <input id="chat-input" type="text" placeholder="Ask about our specials..." class="flex-1 bg-gray-50 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+            <button onclick="sendChatMessage()" class="bg-amber-600 text-white p-2 rounded-xl hover:bg-amber-700 transition-colors"><i data-lucide="send" size="18"></i></button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-[200] flex items-center justify-center px-6 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md"></div>
+        <div class="relative bg-white p-12 rounded-[3rem] text-center max-w-sm shadow-2xl animate-bounce-in">
+            <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8">
+                <i data-lucide="check-circle-2" size="40" class="text-green-600"></i>
+            </div>
+            <h3 class="text-3xl font-serif font-bold mb-4">Order Placed</h3>
+            <p class="text-gray-500 mb-8 leading-relaxed">Our chefs at L'Knight have begun your meal. We'll see you shortly!</p>
+            <button onclick="closeSuccess()" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs active:scale-95 transition-all">Fantastic</button>
+        </div>
+    </div>
+
+    <!-- [LOGIC START] -->
+    <script>
+        // --- Data & State ---
+        const apiKey = ""; // API Key Injected at Runtime
+        const CATEGORIES = ["All", "Appetizers", "Main Courses", "Desserts", "Beverages"];
+        const MENU_ITEMS = [
+            { id: 1, name: "Truffle Tagliatelle", description: "Hand-made pasta tossed in creamy parmesan sauce with fresh black truffle shavings.", price: 24.50, category: "Main Courses", image: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&w=400&q=80", rating: 4.9 },
+            { id: 2, name: "Roasted Octopus", description: "Tender Mediterranean octopus with baby potatoes and smoked paprika oil.", price: 18.00, category: "Appetizers", image: "https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?auto=format&fit=crop&w=400&q=80", rating: 4.7 },
+            { id: 3, name: "Wagyu Beef Burger", description: "Premium Wagyu patty, aged cheddar, caramelized onions on a brioche bun.", price: 22.00, category: "Main Courses", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80", rating: 4.8 },
+            { id: 4, name: "Burrata Salad", description: "Fresh burrata cheese, heirloom tomatoes, balsamic glaze, and basil pesto.", price: 16.50, category: "Appetizers", image: "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?auto=format&fit=crop&w=400&q=80", rating: 4.6 },
+            { id: 5, name: "Chocolate Fondant", description: "Warm lava cake with a molten center, served with Madagascan vanilla gelato.", price: 12.00, category: "Desserts", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=400&q=80", rating: 4.9 },
+            { id: 6, name: "Wild Mushroom Risotto", description: "Arborio rice with porcini mushrooms, thyme, and aged pecorino.", price: 20.50, category: "Main Courses", image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=400&q=80", rating: 4.5 },
+            { id: 7, name: "Classic Espresso Martini", description: "Crafted with premium vodka, freshly brewed espresso, and coffee liqueur.", price: 14.00, category: "Beverages", image: "https://images.unsplash.com/photo-1545438102-799c3991ffb2?auto=format&fit=crop&w=400&q=80", rating: 4.8 }
+        ];
+
+        let cart = [];
+        let currentCategory = "All";
+
+        // --- Core UI Functions ---
+        window.onload = () => {
+            renderFilters();
+            renderMenu();
+            lucide.createIcons();
+            
+            // Handle chat input 'Enter' key
+            document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+        };
+
+        function renderFilters() {
+            const container = document.getElementById('category-filters');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="setCategory('${cat}')" class="px-6 py-2 rounded-full text-sm font-bold tracking-widest uppercase transition-all ${currentCategory === cat ? 'bg-amber-600 text-white shadow-lg shadow-amber-900/10' : 'bg-white text-gray-400 border border-gray-100 hover:border-amber-600'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderFilters();
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menu-grid');
+            const filtered = currentCategory === "All" ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === currentCategory);
+            container.innerHTML = filtered.map(item => `
+                <div class="group bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="speakMenu(${item.id})" id="speak-${item.id}" class="bg-white/95 p-2 rounded-xl hover:text-amber-600 shadow-lg transition-colors">
+                                <i data-lucide="volume-2" size="16"></i>
+                            </button>
+                            <div class="bg-white/95 px-2 py-1 rounded-xl flex items-center gap-1 text-xs font-bold shadow-lg">
+                                <i data-lucide="star" size="12" class="text-amber-500 fill-amber-500"></i> ${item.rating}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-serif font-bold">${item.name}</h3>
+                            <span class="text-lg font-bold text-amber-600">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm mb-8 h-10 line-clamp-2">${item.description}</p>
+                        <button onclick="addToCart(${item.id})" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-amber-600 transition-all active:scale-95 uppercase tracking-widest text-xs">
+                            <i data-lucide="plus" size="18"></i> Add to Order
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- Cart Functions ---
+        function toggleCart(open) {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            if (open) {
+                drawer.classList.remove('closed');
+                drawer.classList.add('open');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('closed');
+                drawer.classList.remove('open');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function addToCart(id) {
+            const item = MENU_ITEMS.find(i => i.id === id);
+            const existing = cart.find(i => i.id === id);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function updateQuantity(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity < 1) cart = cart.filter(i => i.id !== id);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const countBadge = document.getElementById('cart-count');
+            const footer = document.getElementById('cart-footer');
+            const totalDisplay = document.getElementById('cart-total');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 mt-20 italic">Your tray is empty.</p>`;
+                countBadge.classList.add('hidden');
+                footer.classList.add('hidden');
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="flex gap-4 items-center py-4 border-b border-gray-50 last:border-0">
+                        <img src="${item.image}" class="w-16 h-16 rounded-xl object-cover shadow-sm">
+                        <div class="flex-1">
+                            <h4 class="font-serif font-bold text-sm">${item.name}</h4>
+                            <p class="text-amber-600 font-bold text-xs">$${(item.price * item.quantity).toFixed(2)}</p>
+                            <div class="flex items-center gap-4 mt-2">
+                                <div class="flex items-center bg-white rounded-lg px-2 border border-gray-200">
+                                    <button onclick="updateQuantity(${item.id}, -1)" class="p-1 text-gray-400 hover:text-gray-900"><i data-lucide="minus" size="12"></i></button>
+                                    <span class="w-6 text-center text-xs font-bold">${item.quantity}</span>
+                                    <button onclick="updateQuantity(${item.id}, 1)" class="p-1 text-gray-400 hover:text-gray-900"><i data-lucide="plus" size="12"></i></button>
+                                </div>
+                                <button onclick="removeFromCart(${item.id})" class="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0) * 1.1; // 10% tax/service
+                totalDisplay.innerText = `$${total.toFixed(2)}`;
+                
+                countBadge.innerText = cart.reduce((sum, i) => sum + i.quantity, 0);
+                countBadge.classList.remove('hidden');
+                footer.classList.remove('hidden');
+                
+                // Clear recommendation when cart changes
+                document.getElementById('ai-rec-text').innerText = "Click to see a pairing recommendation.";
+                document.getElementById('get-rec-btn').classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+        }
+
+        // --- Gemini AI Integration ---
+
+        async function fetchWithRetry(url, options, retries = 5, backoff = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, backoff));
+                    return fetchWithRetry(url, options, retries - 1, backoff * 2);
+                }
+                throw error;
+            }
+        }
+
+        // 1. AI Sommelier (Text Gen)
+        async function fetchAIRec() {
+            if (cart.length === 0) return;
+            const btn = document.getElementById('get-rec-btn');
+            const text = document.getElementById('ai-rec-text');
+            btn.innerHTML = '<div class="loader"></div>';
+            
+            const cartStr = cart.map(i => i.name).join(", ");
+            try {
+                const response = await fetchWithRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `I have ${cartStr} in my cart at L'Knight Bistro Patna. Suggest either our "Chocolate Fondant" or "Espresso Martini" as a pairing. One short, elegant sentence.` }] }]
+                        })
+                    }
+                );
+                text.innerText = response.candidates?.[0]?.content?.parts?.[0]?.text || "Enjoy our Chocolate Fondant for a perfect finish!";
+                btn.classList.add('hidden');
+            } catch (e) {
+                text.innerText = "Connection lost. Try our signature Espresso Martini!";
+                btn.innerText = "Get Suggestion";
+            }
+        }
+
+        // 2. AI Audio Menu (TTS)
+        function pcmToWav(pcmData, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+            const view = new DataView(buffer);
+            const writeString = (o, s) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)); };
+            writeString(0, 'RIFF'); view.setUint32(4, 32 + pcmData.length * 2, true);
+            writeString(8, 'WAVE'); writeString(12, 'fmt '); view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+            writeString(36, 'data'); view.setUint32(40, pcmData.length * 2, true);
+            for (let i = 0; i < pcmData.length; i++) view.setInt16(44 + i * 2, pcmData[i], true);
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        async function speakMenu(id) {
+            const item = MENU_ITEMS.find(i => i.id === id);
+            const btn = document.getElementById(`speak-${id}`);
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = '<div class="loader"></div>';
+
+            try {
+                const response = await fetchWithRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `Say with a warm, sophisticated Indian hospitality tone: Presenting our ${item.name}. ${item.description}` }] }],
+                            generationConfig: {
+                                responseModalities: ["AUDIO"],
+                                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+                            }
+                        })
+                    }
+                );
+                
+                const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+                if (audioData) {
+                    const binaryString = window.atob(audioData.data);
+                    const bytes = new Int16Array(binaryString.length / 2);
+                    for (let i = 0; i < bytes.length; i++) bytes[i] = binaryString.charCodeAt(i * 2) + (binaryString.charCodeAt(i * 2 + 1) << 8);
+                    const sampleRate = parseInt(audioData.mimeType.match(/rate=(\d+)/)?.[1] || "24000");
+                    const wavBlob = pcmToWav(bytes, sampleRate);
+                    const url = URL.createObjectURL(wavBlob);
+                    const audio = new Audio(url);
+                    audio.onended = () => { btn.innerHTML = originalIcon; URL.revokeObjectURL(url); };
+                    audio.play();
+                } else {
+                    btn.innerHTML = originalIcon;
+                }
+            } catch (e) {
+                btn.innerHTML = originalIcon;
+            }
+        }
+
+        // 3. AI Concierge Chat
+        function toggleChat(open) {
+            const win = document.getElementById('chat-window');
+            if (open) {
+                win.classList.remove('hidden');
+                document.getElementById('chat-input').focus();
+            } else {
+                win.classList.add('hidden');
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+            
+            const container = document.getElementById('chat-messages');
+            container.innerHTML += `<div class="flex justify-end"><div class="bg-amber-600 text-white p-3 rounded-2xl max-w-[85%]">${msg}</div></div>`;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            container.innerHTML += `<div id="${loadingId}" class="flex justify-start"><div class="bg-white p-3 rounded-2xl border border-gray-100 flex gap-2 items-center"><div class="loader"></div> <span class="text-[10px] text-gray-400 italic">Chef is thinking...</span></div></div>`;
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const response = await fetchWithRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `You are the concierge for L'Knight Bistro in Patna, Bihar. Be sophisticated and helpful. Current menu: Truffle Tagliatelle, Roasted Octopus, Wagyu Beef Burger, Burrata Salad, Chocolate Fondant, Wild Mushroom Risotto, Espresso Martini. Answer concisely: ${msg}` }] }]
+                        })
+                    }
+                );
+                document.getElementById(loadingId).remove();
+                const reply = response.candidates?.[0]?.content?.parts?.[0]?.text || "Namaste! I'm here to help, but having a slight technical hitch.";
+                container.innerHTML += `<div class="flex justify-start"><div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 max-w-[85%]">${reply}</div></div>`;
+            } catch (e) {
+                document.getElementById(loadingId).remove();
+                container.innerHTML += `<div class="flex justify-start"><div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 max-w-[85%]">Apologies, my connection to the kitchen is shaky.</div></div>`;
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- Checkout Simulation ---
+        function processOrder() {
+            const btn = document.getElementById('checkout-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader mx-auto"></div>';
+            
+            setTimeout(() => {
+                document.getElementById('success-modal').classList.remove('hidden');
+                cart = [];
+                updateCartUI();
+                toggleCart(false);
+                btn.disabled = false;
+                btn.innerText = "Checkout Now";
+            }, 1500);
+        }
+
+        function closeSuccess() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+    </script>
+    <!-- [LOGIC END] -->
+</body>
+</html>
